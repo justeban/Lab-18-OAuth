@@ -1,0 +1,34 @@
+{
+  "name": "lab-18-web-server",
+  "version": "1.0.0",
+  "description": "Connecting to Auth0 for Sign In",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint **/*.js",
+    "start": "node index.js",
+    "test": "jest --coverage --verbose",
+    "test-watch": "jest --watchAll --verbose --coverage",
+    "watch": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/justeban/Lab-18-OAuth-web-server.git"
+  },
+  "author": "Justin Morris and Timea",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/justeban/Lab-18-OAuth-web-server/issues"
+  },
+  "homepage": "https://github.com/justeban/Lab-18-OAuth-web-server#readme",
+  "dependencies": {
+    "babel-env": "^2.4.1",
+    "babel-eslint": "^8.2.3",
+    "babel-register": "^6.26.0",
+    "dotenv": "^5.0.1",
+    "eslint": "^4.19.1",
+    "express": "^4.16.3",
+    "jest": "^23.0.1",
+    "require-dir": "^1.0.0",
+    "uuid": "^3.2.1"
+  }
+}
