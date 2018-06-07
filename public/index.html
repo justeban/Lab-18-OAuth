@@ -1,76 +1,149 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Auth Test</title>
-    </head>
-    <body>
-        <main>
 
-            <div id="oauth"></div>
+<head>
+    <title>Auth Test</title>
+</head>
 
-            <hr>
+<body>
+    <main>
 
-            Access Token: <span id="token"></span>
-            <hr>
-            <h2>Sign Up</h2>
-            <form id="signup">
-                <label>
-                Username: <input name="username" required />
-                </label>
+        <div id="oauth"></div>
 
-                <label>
-                    Email: <input name="email" type="email" required />
-                </label>
+        <hr> Access Token:
+        <span id="token"></span>
+        <hr>
+        <h2>Sign Up</h2>
+        <form id="signup">
+            <label>
+                Username:
+                <input name="username" required />
+            </label>
 
-                <label>
-                    Password: <input name="password" type="password" required />
-                </label>
+            <label>
+                Email:
+                <input name="email" type="email" required />
+            </label>
 
-                <input type="submit" value="Create User" />
-            </form>
+            <label>
+                Password:
+                <input name="password" type="password" required />
+            </label>
 
-            <hr />
+            <input type="submit" value="Create User" />
+        </form>
 
-            <h2>Sign In</h2>
-            <form id="signin">
-                <label>
-                    Username: <input name="username">
-                </label>
+        <hr />
 
-                <label>
-                    Password: <input name="password" type="password" />
-                </label>
+        <h2>Sign In</h2>
+        <form id="signin">
+            <label>
+                Username:
+                <input name="username">
+            </label>
 
-                <input type="submit" value="Sign In" />
-            </form>
+            <label>
+                Password:
+                <input name="password" type="password" />
+            </label>
 
-            <hr />
-            <div>
-                <a id='money' href="#">Show Me The Money</a> (after you sign up or sign in)
-            </div>
-            <div id="cash"></div>
-        </main>
+            <input type="submit" value="Sign In" />
+        </form>
 
-        <script src="http://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+        <hr />
+        <div>
+            <a id='money' href="#">Show Me The Money</a> (after you sign up or sign in)
+        </div>
+        <div id="cash"></div>
+    </main>
 
-        <script>
-            let googleURL = 'https://accounts.google.com/o/oauth2/v2/auth';
-            let options = {
-                client_id: '741877600008-tanrh87iaffbaudvft9hio29hrbil4e0.apps.googleusercontent.com',
-                redirect_uri: 'http://localhost:4000/oauth/google/code',
-                scope: 'email openid profile',
-                prompt: 'consent',
-                response_type: 'code'
-            }
+    <script src="http://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
 
-            let QueryString = Object.keys(options).map((key, i) => {
-                return `${key}=` + encodeURIComponent(options[key]);
-            }).join('&');
+    <script>
+        let token = '';
 
-            let authURL = `${googleURL}?${QueryString}`;
+        $('#money').hide();
 
-            $('#oauth').append(`<a href="${authURL}">Sign In With Google</a>`);
-        </script>
+        $('#money').on('click', function (e) {
+            e.preventDefault();
+            console.log('Sending Token', token);
+            $.ajax({
+                type: "GET",
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
+                url: "http://localhost:3000/api/v1/users",
+                async: false,
+                success: function (data) {
+                    $('#cash').text(data);
+                },
+            });
+        });
 
-    </body>
+        $('#signup').on('submit', function (e) {
+            let username = $(this).find('[name=username]').val();
+            let password = $(this).find('[name=password]').val();
+            let postData = { username, password };
+
+            e.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:3000/signup",
+                async: false,
+                data: postData,
+                success: function (data) {
+                    token = data;
+                    $('#money').show();
+                    $('#token').text(token);
+                },
+            });
+        });
+
+        $('#signin').on('submit', function (e) {
+            e.preventDefault();
+            let username = $(this).find('[name=username]').val();
+            let password = $(this).find('[name=password]').val();
+            let authstring = btoa(`${username}:${password}`);
+            $.ajax({
+                type: "GET",
+                url: "http://localhost:3000/signin",
+                async: false,
+                headers: {
+                    "Authorization": "Basic " + authstring
+                },
+                success: function (data) {
+                    token = data;
+                    $('#money').show();
+                    $('#token').text(token);
+                },
+            });
+        });
+
+    </script>
+
+    <script>
+
+        // let googleURL = "https://accounts.google.com/o/oauth2/v2/auth";
+
+        // let options = {
+        //     client_id: '560654039720-vl4u273l6hl684o5scfd0r58t531g1vt.apps.googleusercontent.com',
+        //     redirect_uri: 'http://localhost:3000/oauth/google/code',
+        //     scope: 'email openid profile',
+        //     prompt: 'consent',
+        //     response_type: 'code'
+        // }
+
+        // let QueryString = Object.keys(options).map((key, i) => {
+        //     return `${key}=` + encodeURIComponent(options[key]);
+        // }).join("&");
+
+        // let authURL = `${googleURL}?${QueryString}`;
+
+        $('#oauth').append(`<a href="http://localhost:3000/login">Login With Auth0</a>`);
+
+    </script>
+
+
+</body>
+
 </html>
